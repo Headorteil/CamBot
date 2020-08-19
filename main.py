@@ -38,7 +38,7 @@ class CamBot():
         @self.bot.event
         async def on_command_error(ctx, exc):
             command = ctx.message.content[1:].split(" ")[0]
-            if command not in self.bot.commands:
+            if command not in self.bot.all_commands:
                 return
             ctx.message.content = "{pref}help {cmd}".format(pref=self.prefix,
                                                             cmd=command)
