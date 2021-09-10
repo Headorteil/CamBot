@@ -4,6 +4,7 @@ from discord import File, Embed
 from discord.ext import commands
 from discord.utils import find
 from io import BytesIO
+from datetime import datetime
 from aiohttp_requests import requests
 import asyncio
 import aiohttp
@@ -75,6 +76,45 @@ class CamBot():
             a = await a.content.read()
             with BytesIO(a) as image:
                 await ctx.send(file=File(image, "room.png"))
+
+        @self.bot.command()
+        async def today(ctx):
+            """ Sends occupation periods during the day """
+            try:
+                a = await requests.get(cam_url+stats_endpoint)
+            except aiohttp.client_exceptions.ClientOSError:
+                await ctx.send("```{}```".format(error_unreachable))
+                return
+            a = await a.text()
+            periods = []
+            for line in a.split("\n"):
+                if "|" in line:
+                    debut, fin = [l.strip() for l in line.split("|")]
+                    debut = datetime.fromisoformat(debut)
+                    fin = datetime.fromisoformat(fin)
+                    if fin.date() == datetime.now().date():
+                        l = debut.strftime("%H:%M")
+                        l += " → "
+                        l += fin.strftime("%H:%M")
+                        periods.append(l)
+                else:
+                    debut = datetime.fromisoformat(line)
+                    if debut.date() != datetime.now().date():
+                        l = debut.strftime("%d/%m/%y %H:%M")
+                    else:
+                        l = debut.strftime("%H:%M")
+                    l += " → "
+                    l += now_term
+                    periods.append(l)
+
+            msg = "\n".join(periods)
+            if len(msg) != 0:
+                e = Embed(title=occupation_title, description=msg)
+            else:
+                e = Embed(title=occupation_title,
+                          description=no_occupation)
+            await ctx.send(embed=e)
+
 
     def start(self):
         self.catch()
