@@ -14,7 +14,7 @@ websockets==9.1           # via discord.py
 yarl==1.4.2               # via aiohttp
 aiodns==2.0.0             # via aiohttp-requests
 aiohttp-requests==0.1.2   # via -r requirements.in
-aiohttp==3.7.4            # via aiohttp-requests
+aiohttp==3.8.5            # via aiohttp-requests
 async-timeout==2.0.1      # via aiohttp
 cchardet==2.1.5           # via aiohttp-requests
 cffi==1.14.0              # via pycares
